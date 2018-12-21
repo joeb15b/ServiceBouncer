@@ -43,6 +43,7 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextMenuStartItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStopItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuViewLogItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRestartItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuSpacer1 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuDeleteItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,6 +64,7 @@
             this.toolStripStartButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripPauseButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripStopButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripViewLogButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripRestartButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDeleteButton = new System.Windows.Forms.ToolStripButton();
@@ -99,7 +101,7 @@
             // toolStripContainer.ContentPanel
             // 
             this.toolStripContainer.ContentPanel.Controls.Add(this.dataGridView);
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1008, 307);
+            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1008, 280);
             this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer.Name = "toolStripContainer";
@@ -176,7 +178,7 @@
             this.dataGridView.RowHeadersVisible = false;
             this.dataGridView.RowTemplate.Height = 25;
             this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView.Size = new System.Drawing.Size(1008, 307);
+            this.dataGridView.Size = new System.Drawing.Size(1008, 280);
             this.dataGridView.TabIndex = 0;
             // 
             // dataGridStatusIcon
@@ -225,6 +227,7 @@
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextMenuStartItem,
             this.contextMenuStopItem,
+            this.contextMenuViewLogItem,
             this.contextMenuRestartItem,
             this.contextMenuSpacer1,
             this.contextMenuDeleteItem,
@@ -235,7 +238,7 @@
             this.contextMenuOpenLocation,
             this.contextMenuAssemblyInfo});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(180, 198);
+            this.contextMenu.Size = new System.Drawing.Size(180, 220);
             // 
             // contextMenuStartItem
             // 
@@ -252,6 +255,14 @@
             this.contextMenuStopItem.Size = new System.Drawing.Size(179, 22);
             this.contextMenuStopItem.Text = "Stop";
             this.contextMenuStopItem.Click += new System.EventHandler(this.StopClicked);
+            // 
+            // contextMenuViewLogItem
+            // 
+            this.contextMenuViewLogItem.Image = global::ServiceBouncer.Properties.Resources.ViewLog;
+            this.contextMenuViewLogItem.Name = "contextMenuViewLogItem";
+            this.contextMenuViewLogItem.Size = new System.Drawing.Size(179, 22);
+            this.contextMenuViewLogItem.Text = "View Logs";
+            this.contextMenuViewLogItem.Click += new System.EventHandler(this.ViewLogsClicked);
             // 
             // contextMenuRestartItem
             // 
@@ -357,6 +368,7 @@
             this.toolStripStartButton,
             this.toolStripPauseButton,
             this.toolStripStopButton,
+            this.toolStripViewLogButton,
             this.toolStripRestartButton,
             this.toolStripSeparator1,
             this.toolStripDeleteButton,
@@ -372,7 +384,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.toolStrip.Size = new System.Drawing.Size(1008, 32);
+            this.toolStrip.Size = new System.Drawing.Size(1008, 59);
             this.toolStrip.Stretch = true;
             this.toolStrip.TabIndex = 0;
             // 
@@ -427,9 +439,18 @@
             this.toolStripStopButton.Image = global::ServiceBouncer.Properties.Resources.Stop;
             this.toolStripStopButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripStopButton.Name = "toolStripStopButton";
-            this.toolStripStopButton.Size = new System.Drawing.Size(60, 29);
+            this.toolStripStopButton.Size = new System.Drawing.Size(89, 29);
             this.toolStripStopButton.Text = "Stop";
             this.toolStripStopButton.Click += new System.EventHandler(this.StopClicked);
+            //
+            // toolStripViewLogButton
+            //
+            this.toolStripViewLogButton.Image = global::ServiceBouncer.Properties.Resources.ViewLog;
+            this.toolStripViewLogButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripViewLogButton.Name = "toolStripStopButton";
+            this.toolStripViewLogButton.Size = new System.Drawing.Size(89, 29);
+            this.toolStripViewLogButton.Text = "View Logs";
+            this.toolStripViewLogButton.Click += new System.EventHandler(this.ViewLogsClicked);
             // 
             // toolStripRestartButton
             // 
@@ -590,6 +611,7 @@
         private System.Windows.Forms.ToolStripContainer toolStripContainer;
         private System.Windows.Forms.ToolStripButton toolStripStartButton;
         private System.Windows.Forms.ToolStripButton toolStripStopButton;
+        private System.Windows.Forms.ToolStripButton toolStripViewLogButton;
         private System.Windows.Forms.Timer refreshTimer;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.BindingSource serviceViewModelBindingSource;
@@ -600,6 +622,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem contextMenuStartItem;
         private System.Windows.Forms.ToolStripMenuItem contextMenuStopItem;
+        private System.Windows.Forms.ToolStripMenuItem contextMenuViewLogItem;
         private System.Windows.Forms.ToolStripMenuItem contextMenuRestartItem;
         private System.Windows.Forms.ToolStripSeparator contextMenuSpacer2;
         private System.Windows.Forms.ToolStripMenuItem contextMenuRefreshItem;

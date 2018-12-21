@@ -2,13 +2,17 @@ using ServiceBouncer.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace ServiceBouncer
 {
@@ -25,6 +29,26 @@ namespace ServiceBouncer
         public ServiceViewModel(ServiceController controller)
         {
             this.controller = controller;
+        }
+
+        private const string NotepadPlusPlus = @"C:\Program Files\Notepad++\notepad++.exe";
+        private const string NotepadPlusPlus86 = @"C:\Program Files (x86)\Notepad++\notepad++.exe";
+        private string notepadPlusPlusLocation = string.Empty;
+
+        private void CheckForNotepadPlusPlus()
+        {
+            if (File.Exists(NotepadPlusPlus))
+            {
+                notepadPlusPlusLocation = NotepadPlusPlus;
+            }
+            else if (File.Exists(NotepadPlusPlus86))
+            {
+                notepadPlusPlusLocation = NotepadPlusPlus86;
+            }
+            else
+            {
+                notepadPlusPlusLocation = "notepad.exe";
+            }
         }
 
         public async Task Start()
@@ -60,6 +84,53 @@ namespace ServiceBouncer
 
                 await Refresh(RefreshData.Status);
             }
+        }
+
+        public string GetLogFileFromConfig(string configFile)
+        {
+            var xml = XDocument.Load(configFile);
+            var rootLogAttribute = xml.Descendants("log4net");
+            string logfileName = "";
+            if (rootLogAttribute.Descendants().Any())
+            {
+                logfileName = rootLogAttribute.Descendants("appender").Where(x => x.Attribute("name").Value == "RollingFile" || x.Attribute("name").Value == "FileAppender").Select(x => x.Element("file")).First().FirstAttribute.Value;
+            }
+            else
+            {
+                logfileName = xml.Root.Descendants().Where(x => x.Attribute("name").Value == "RollingFile" || x.Attribute("name").Value == "FileAppender").Select(x => x.Element("file")).First().FirstAttribute.Value;
+            }
+            return logfileName;
+        }
+
+        public async Task ViewSingleLog()
+        {
+            await Task.Run(() =>
+            {
+                var path = controller.GetExecutablePath();
+                var configFileName = path.FullName + ".config";
+                var logFileName = "";
+                CheckForNotepadPlusPlus();
+                if (File.Exists(configFileName))
+                {
+                    if (File.Exists(path.DirectoryName + "\\log4net.config"))
+                    {
+                        logFileName = GetLogFileFromConfig(path.DirectoryName + "\\log4net.config");
+                    }
+                    else
+                    {
+                        logFileName = GetLogFileFromConfig(configFileName);
+                    }
+                    
+                    if(!File.Exists(logFileName))
+                        MessageBox.Show(@"Log file does not exist", @"View In Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                        Process.Start(notepadPlusPlusLocation, logFileName);
+                }
+                else
+                {
+                    MessageBox.Show(@"Can't find config file for service", @"View In Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
         }
 
         public async Task Stop()

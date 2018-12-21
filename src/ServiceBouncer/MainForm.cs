@@ -112,6 +112,23 @@ namespace ServiceBouncer
             await PerformOperation(async x => await x.Stop());
         }
 
+        private async void ViewLogsClicked(object sender, EventArgs e)
+        {
+            await PerformOperationWithCheck(s =>
+                {
+                    if (s.Count > 1)
+                    {
+                        foreach (var a in s)
+                        {
+                            a.ViewSingleLog();
+                        }
+                    }
+
+                    return true;
+                },
+                async x => { await x.ViewSingleLog(); });
+        }
+
         private async void PauseClicked(object sender, EventArgs e)
         {
             await PerformOperation(async x => await x.Pause());
